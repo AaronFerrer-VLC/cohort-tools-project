@@ -1,36 +1,32 @@
-const express = require("express");
-const morgan = require("morgan");
-const cookieParser = require("cookie-parser");
-const PORT = 5005;
+const express = require('express')
+const logger = require('morgan')
+const cors = require('cors')
 
-// STATIC DATA
-// Devs Team - Import the provided files with JSON data of students and cohorts here:
-// ...
+const app = express()
 
+app.use(
+    cors({ origin: "http://localhost:5173" })
+)
 
-// INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
-const app = express();
+app.use(logger('dev'))
+app.use(express.json())
 
+app.get('/api/cohorts', (req, res) => {
 
-// MIDDLEWARE
-// Research Team - Set up CORS middleware here:
-// ...
-app.use(express.json());
-app.use(morgan("dev"));
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+    const cohorts = require('./cohorts.json')
 
+    res.json(cohorts)
+})
 
-// ROUTES - https://expressjs.com/en/starter/basic-routing.html
-// Devs Team - Start working on the routes here:
-// ...
-app.get("/docs", (req, res) => {
-  res.sendFile(__dirname + "/views/docs.html");
-});
+app.get('/api/students', (req, res) => {
 
+    const students = require('./students.json')
 
-// START SERVER
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+    res.json(students)
+})
+
+app.get('/*', (req, res) => {
+    res.json('404')
+})
+
+app.listen(5005, () => console.log('Server running on port 5005'))
